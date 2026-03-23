@@ -114,10 +114,12 @@ const Scene = () => {
 }
 
 export const Hero3DWebGL = () => {
-  const titleWords = "Synapse AI".split(" ")
-  const subtitle = "Нейроинтерфейсы нового поколения."
+  const titleWords = "Quest 6".split(" ")
+  const subtitle = "Придумай испытание — герои его пройдут."
   const [visibleWords, setVisibleWords] = useState(0)
   const [subtitleVisible, setSubtitleVisible] = useState(false)
+  const [inputVisible, setInputVisible] = useState(false)
+  const [quest, setQuest] = useState("")
   const [delays, setDelays] = useState<number[]>([])
   const [subtitleDelay, setSubtitleDelay] = useState(0)
 
@@ -136,6 +138,13 @@ export const Hero3DWebGL = () => {
     }
   }, [visibleWords, titleWords.length])
 
+  useEffect(() => {
+    if (subtitleVisible) {
+      const timeout = setTimeout(() => setInputVisible(true), 700)
+      return () => clearTimeout(timeout)
+    }
+  }, [subtitleVisible])
+
   return (
     <div className="h-screen bg-black relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none z-10">
@@ -145,8 +154,8 @@ export const Hero3DWebGL = () => {
         <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-black to-transparent" />
       </div>
 
-      <div className="h-screen uppercase items-center w-full absolute z-[60] pointer-events-none px-10 flex justify-center flex-col">
-        <div className="text-3xl md:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold font-orbitron">
+      <div className="h-screen items-center w-full absolute z-[60] px-10 flex justify-center flex-col">
+        <div className="text-3xl md:text-5xl xl:text-7xl 2xl:text-8xl font-extrabold font-orbitron uppercase">
           <div className="flex space-x-2 lg:space-x-6 overflow-hidden text-white">
             {titleWords.map((word, index) => (
               <div
@@ -155,6 +164,7 @@ export const Hero3DWebGL = () => {
                 style={{
                   animationDelay: `${index * 0.13 + (delays[index] || 0)}s`,
                   opacity: index < visibleWords ? undefined : 0,
+                  color: index === 1 ? "#ef4444" : "white",
                 }}
               >
                 {word}
@@ -162,7 +172,7 @@ export const Hero3DWebGL = () => {
             ))}
           </div>
         </div>
-        <div className="text-xs md:text-xl xl:text-2xl 2xl:text-3xl mt-2 overflow-hidden text-white font-bold max-w-4xl mx-auto text-center px-4">
+        <div className="text-xs md:text-xl xl:text-2xl 2xl:text-3xl mt-4 overflow-hidden text-white font-bold max-w-4xl mx-auto text-center px-4">
           <div
             className={subtitleVisible ? "fade-in-subtitle" : ""}
             style={{
@@ -172,6 +182,28 @@ export const Hero3DWebGL = () => {
           >
             {subtitle}
           </div>
+        </div>
+
+        {/* Adventure Input */}
+        <div
+          className="mt-8 w-full max-w-2xl mx-auto transition-all duration-700"
+          style={{ opacity: inputVisible ? 1 : 0, transform: inputVisible ? "translateY(0)" : "translateY(20px)" }}
+        >
+          <div className="relative flex items-center">
+            <input
+              type="text"
+              value={quest}
+              onChange={(e) => setQuest(e.target.value)}
+              placeholder="Введи испытание для команды... например: «Выжить в вулканическом лабиринте»"
+              className="w-full bg-white/5 border border-red-500/40 text-white placeholder-white/30 rounded-xl px-6 py-4 pr-36 text-sm md:text-base font-geist focus:outline-none focus:border-red-500 transition-colors"
+            />
+            <button className="absolute right-2 bg-red-500 hover:bg-red-600 text-white font-bold font-orbitron text-sm px-5 py-2.5 rounded-lg transition-colors uppercase tracking-wide">
+              Начать
+            </button>
+          </div>
+          <p className="text-white/30 text-xs text-center mt-3 font-space-mono">
+            6 героев уже ждут твоего задания
+          </p>
         </div>
       </div>
 
